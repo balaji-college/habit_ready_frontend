@@ -27,7 +27,7 @@ function CalendarGrid({ completionMap }) {
   return (
     <section className="md:col-span-8 bg-surface-container-lowest rounded-xl p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="font-headline font-bold text-xl text-primary">Monthly Rhythm</h2>
+        <h2 className="font-headline font-bold text-xl text-primary">Monthly Progress</h2>
         <div className="flex items-center gap-3">
           <span className="text-sm font-semibold text-on-surface-variant">{monthName}</span>
           <div className="flex gap-1">

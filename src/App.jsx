@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { useEffect } from 'react';
 
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -29,6 +30,16 @@ function PublicRoute({ children }) {
   return user ? <Navigate to="/dashboard" replace /> : children;
 }
 
+// Applies/removes the `dark` class on <html> based on user preference
+function DarkModeSync() {
+  const { user } = useAuth();
+  useEffect(() => {
+    const isDark = user?.preferences?.darkMode ?? false;
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [user?.preferences?.darkMode]);
+  return null;
+}
+
 function AppRoutes() {
   return (
     <Routes>
@@ -48,6 +59,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <DarkModeSync />
         <Toaster
           position="top-center"
           toastOptions={{

@@ -140,7 +140,7 @@ function AboutModal({ onClose }) {
         <h2 className="font-headline font-bold text-2xl text-primary mb-1">This Time For Real</h2>
         <p className="text-on-surface-variant text-sm mb-6">Version 1.0.0</p>
         <p className="text-on-surface-variant text-sm leading-relaxed mb-8">
-          A premium habit tracking experience built to help you curate your lifestyle and unlock peak performance. Design your ritual. Track your evolution.
+          A premium habit tracking experience built to help you curate your lifestyle and unlock peak performance. Design your Habitz. Track your evolution.
         </p>
         <div className="grid grid-cols-3 gap-3 mb-8 text-center">
           {[
@@ -239,19 +239,74 @@ export default function Settings() {
     } finally { setSaving(false); }
   };
 
-  const handleExportData = () => {
-    const exportData = {
-      user: { name: user?.name, email: user?.email },
-      exportedAt: new Date().toISOString(),
-    };
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'ttfr-data-export.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Data exported!');
+  const handleExportData = async () => {
+    try {
+      toast.loading('Preparing your data…', { id: 'export' });
+      const { data: habits } = await client.get('/habits');
+
+      const exportData = {
+        exportedAt: new Date().toISOString(),
+        user: { name: user?.name, email: user?.email },
+        habits: habits.map(h => ({
+          name: h.name,
+          description: h.description,
+          category: h.category,
+          color: h.color,
+          targetDays: h.targetDays,
+          currentStreak: h.currentStreak,
+          totalCompletions: h.completions?.length ?? 0,
+          completions: h.completions?.map(c => ({
+            date: c.date,
+            note: c.note || '',
+            completedAt: c.completedAt,
+          })) ?? [],
+        })),
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ttfr-export-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast.success('Data exported as JSON!', { id: 'export' });
+    } catch {
+      toast.error('Failed to export data', { id: 'export' });
+    }
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      toast.loading('Preparing CSV…', { id: 'csv' });
+      const { data: habits } = await client.get('/habits');
+
+      const rows = [['Habit', 'Category', 'Date', 'Note']];
+      habits.forEach(h => {
+        (h.completions || []).forEach(c => {
+          rows.push([
+            `"${h.name.replace(/"/g, '""')}"`,
+            h.category,
+            c.date,
+            `"${(c.note || '').replace(/"/g, '""')}"`,
+          ]);
+        });
+      });
+
+      const csv = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ttfr-export-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      toast.success('Data exported as CSV!', { id: 'csv' });
+    } catch {
+      toast.error('Failed to export CSV', { id: 'csv' });
+    }
   };
 
   const handleClearCache = () => {
@@ -393,7 +448,20 @@ export default function Settings() {
               className="w-full flex items-center gap-4 p-4 hover:bg-surface-container-lowest rounded-2xl transition-colors text-left"
             >
               <span className="material-symbols-outlined text-on-surface-variant">file_download</span>
-              <span className="font-medium">Export My Data</span>
+              <div>
+                <span className="font-medium">Export as JSON</span>
+                <p className="text-xs text-on-surface-variant">Full habits + history</p>
+              </div>
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="w-full flex items-center gap-4 p-4 hover:bg-surface-container-lowest rounded-2xl transition-colors text-left"
+            >
+              <span className="material-symbols-outlined text-secondary">table_chart</span>
+              <div>
+                <span className="font-medium">Export as CSV</span>
+                <p className="text-xs text-on-surface-variant">Spreadsheet-friendly format</p>
+              </div>
             </button>
             <button
               onClick={handleClearCache}

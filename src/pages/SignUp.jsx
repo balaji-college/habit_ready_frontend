@@ -44,7 +44,7 @@ export default function SignUp() {
 
           <div className="relative z-10">
             <h1 className="font-headline font-extrabold text-4xl tracking-tighter mb-2">This Time For Real</h1>
-            <p className="font-body text-on-primary-container text-lg max-w-xs opacity-80">Design your ritual. Track your evolution.</p>
+            <p className="font-body text-on-primary-container text-lg max-w-xs opacity-80">Design your Habitz. Track your evolution.</p>
           </div>
 
           <div className="relative z-10">
@@ -58,8 +58,12 @@ export default function SignUp() {
               </div>
             </div>
             <div className="glass p-6 rounded-2xl text-primary">
-              <p className="italic font-medium mb-2 leading-relaxed">"The first tracker that feels like a premium lifestyle choice, not just a list of tasks."</p>
-              <p className="text-xs font-bold uppercase tracking-widest opacity-60">— Editorial Review</p>
+              <p className="italic font-medium mb-2 leading-relaxed">"The more you
+                sweat in
+                practice, the less
+                you bleed in
+                battle."</p>
+              <p className="text-xs font-bold uppercase tracking-widest opacity-60">— Richard Marcinko</p>
             </div>
           </div>
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary-container to-transparent opacity-40 pointer-events-none" />
@@ -77,7 +81,7 @@ export default function SignUp() {
 
           <div className="mb-10">
             <h2 className="font-headline font-bold text-3xl text-primary tracking-tight mb-2">Create Account</h2>
-            <p className="text-on-surface-variant font-medium">Begin your journey toward a focused ritual.</p>
+            <p className="text-on-surface-variant font-medium">Begin your journey toward a focused Habitz.</p>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>

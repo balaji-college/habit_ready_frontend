@@ -109,7 +109,7 @@ export default function Login() {
               <span className="text-secondary">momentum.</span>
             </h2>
             <p className="text-on-surface-variant font-body text-lg max-w-md leading-relaxed mb-8">
-              Join the elite community using rhythmic habit tracking to curate their lifestyle journals and unlock peak performance.
+             Make progress. See results . Make more progress
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-surface-container-lowest p-6 rounded-3xl shadow-card">
@@ -131,7 +131,7 @@ export default function Login() {
           <div className="bg-surface-container-lowest md:glass p-8 md:p-12 rounded-4xl shadow-none md:shadow-glass">
             <div className="mb-10 text-center md:text-left">
               <h1 className="font-headline text-4xl font-extrabold tracking-tighter text-primary">This Time For Real</h1>
-              <p className="text-on-surface-variant font-body mt-2">Welcome back to your ritual.</p>
+              <p className="text-on-surface-variant font-body mt-2">Welcome back to your Habitz.</p>
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
@@ -208,7 +208,7 @@ export default function Login() {
 
             <div className="mt-12 text-center">
               <p className="text-sm font-body text-on-surface-variant">
-                New to the rhythm?{' '}
+                New to the Habitz?{' '}
                 <Link to="/signup" className="text-primary font-bold hover:text-secondary ml-1 transition-colors">Start for free</Link>
               </p>
             </div>
