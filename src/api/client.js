@@ -16,11 +16,12 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally
+// Handle 401 globally — but NOT for auth endpoints (those 401s are expected validation errors)
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isAuthRoute = error.config?.url?.startsWith('/auth/');
+    if (error.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('ttfr_token');
       localStorage.removeItem('ttfr_user');
       window.location.href = '/login';

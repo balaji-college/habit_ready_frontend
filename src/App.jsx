@@ -57,26 +57,29 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <DarkModeSync />
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            style: {
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 600,
-              borderRadius: '16px',
-              background: '#ffffff',
-              color: '#191c1e',
-              boxShadow: '0 8px 32px rgba(0,6,102,0.1)',
-            },
-            success: { iconTheme: { primary: '#006e2a', secondary: '#fff' } },
-            error: { iconTheme: { primary: '#ba1a1a', secondary: '#fff' } },
-          }}
-        />
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+    <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontWeight: 600,
+            borderRadius: '16px',
+            background: '#ffffff',
+            color: '#191c1e',
+            boxShadow: '0 8px 32px rgba(0,6,102,0.1)',
+          },
+          success: { duration: 3000, iconTheme: { primary: '#006e2a', secondary: '#fff' } },
+          error: { duration: 5000, iconTheme: { primary: '#ba1a1a', secondary: '#fff' } },
+        }}
+      />
+      <BrowserRouter>
+        <AuthProvider>
+          <DarkModeSync />
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </>
   );
 }

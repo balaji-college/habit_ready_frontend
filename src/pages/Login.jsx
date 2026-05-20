@@ -2,23 +2,24 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import client from '../api/client';
-import toast from 'react-hot-toast';
 
 // ── Forgot Password Inline Modal ──────────────────────────────
 function ForgotPasswordModal({ onClose }) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [forgotError, setForgotError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) { toast.error('Enter your email address'); return; }
+    if (!email) { setForgotError('Please enter your email address.'); return; }
+    setForgotError('');
     setLoading(true);
     try {
       await client.post('/auth/forgot-password', { email });
       setSent(true);
     } catch {
-      toast.error('Failed to send reset email');
+      setForgotError('Failed to send reset email. Please try again.');
     } finally { setLoading(false); }
   };
 
@@ -50,12 +51,19 @@ function ForgotPasswordModal({ onClose }) {
                   <span className="material-symbols-outlined text-[20px]">mail</span>
                 </div>
                 <input
-                  type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  type="email" value={email}
+                  onChange={e => { setForgotError(''); setEmail(e.target.value); }}
                   placeholder="name@example.com"
                   className="w-full bg-surface-container-low rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline border-0 focus:ring-2 focus:ring-primary/20 outline-none font-headline"
                 />
               </div>
             </div>
+            {forgotError && (
+              <p className="text-sm text-error font-headline flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
+                {forgotError}
+              </p>
+            )}
             <button
               type="submit" disabled={loading}
               className="w-full py-4 bg-primary text-white font-headline font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
@@ -74,21 +82,30 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
+  const [message, setMessage] = useState({ text: '', type: '' }); // type: 'error' | 'success'
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  const handleChange = (e) => {
+    setMessage({ text: '', type: '' });
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.email || !form.password) { toast.error('Please fill in all fields'); return; }
+    if (!form.email || !form.password) {
+      setMessage({ text: 'Please fill in all fields.', type: 'error' });
+      return;
+    }
     setLoading(true);
+    setMessage({ text: '', type: '' });
     try {
       await login(form.email, form.password);
-      toast.success('Welcome back!');
-      navigate('/dashboard');
+      setMessage({ text: 'Welcome back! Redirecting…', type: 'success' });
+      setTimeout(() => navigate('/dashboard'), 800);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed');
+      const msg = err.response?.data?.message || 'Login failed. Please try again.';
+      setMessage({ text: msg, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -173,6 +190,19 @@ export default function Login() {
                 </div>
               </div>
 
+              {/* Inline message — error or success */}
+              {message.text && (
+                <p className={`text-sm font-headline flex items-center gap-2 ${message.type === 'error' ? 'text-error' : 'text-secondary'}`}>
+                  <span
+                    className="material-symbols-outlined text-[18px] shrink-0"
+                    style={{ fontVariationSettings: "'FILL' 1" }}
+                  >
+                    {message.type === 'error' ? 'error' : 'check_circle'}
+                  </span>
+                  {message.text}
+                </p>
+              )}
+
               <button
                 type="submit" disabled={loading}
                 className="w-full bg-primary text-white font-headline font-bold py-4 rounded-xl shadow-lg hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
@@ -197,7 +227,7 @@ export default function Login() {
               {['Google', 'Facebook'].map(provider => (
                 <button
                   key={provider} type="button"
-                  onClick={() => toast(`${provider} login coming soon!`, { icon: '🚀' })}
+                  onClick={() => setMessage({ text: `${provider} login coming soon!`, type: 'success' })}
                   className="flex items-center justify-center gap-3 bg-surface-container-high py-4 rounded-xl hover:bg-surface-container-highest transition-colors font-headline font-bold text-sm"
                 >
                   <span className="material-symbols-outlined text-[20px]">{provider === 'Google' ? 'language' : 'public'}</span>
